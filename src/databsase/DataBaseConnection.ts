@@ -12,7 +12,7 @@ export default class DatabaseConnection {
       port: 3306,
       username: 'root',
       password: 'root',
-      database: 'lotionMoon',
+      database: 'LotionMoon',
       synchronize: false,
       entities: [''],
     });
