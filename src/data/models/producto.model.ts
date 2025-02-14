@@ -1,47 +1,24 @@
-import { DataSource, ObjectLiteral, EntityTarget, Repository } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
+import { Inventory } from "./inventory.model";
 
-export default class DatabaseConnection {
-  private dataSource: DataSource;
+@Entity()
+export class Product {
+  @PrimaryGeneratedColumn()
+  productID!: number;
 
-  private static instance: DatabaseConnection;
+  @Column({ length: 100 })
+  productName!: string;
 
-  private constructor() {
-    this.dataSource = new DataSource({
-      type: 'mysql',
-      host: '127.0.0.1',
-      port: 3306,
-      username: 'root',
-      password: 'root',
-      database: 'lotionMoon',
-      synchronize: false,
-      entities: [''],
-    });
-  }
+  @Column()
+  price!: number;
 
-  private get isConnected(): boolean {
-    return this.dataSource.isInitialized;
-  }
+  @Column({ length: 30 })
+  brand!: string;
 
-  public getRepository<Entity extends ObjectLiteral>(
-    entityTarget: EntityTarget<Entity>
-  ): Repository<Entity> {
-    return this.dataSource.getRepository(entityTarget);
-  }
+  @Column({ length: 100 })
+  descripcion!: string;
 
-  private async connect(): Promise<void> {
-    await this.dataSource.initialize();
-  }
-
-  public static async getConnectedInstance(): Promise<DatabaseConnection> {
-    if (!DatabaseConnection.instance) {
-      DatabaseConnection.instance = new DatabaseConnection();
-    }
-
-    if (!DatabaseConnection.instance.isConnected) {
-      await DatabaseConnection.instance.connect();
-      
-    }
-
-    return DatabaseConnection.instance;
-  }
+  // Relación inversa con Inventory
+  @OneToMany(() => Inventory, (inventory) => inventory.product)
+  inventory!: Inventory[];
 }

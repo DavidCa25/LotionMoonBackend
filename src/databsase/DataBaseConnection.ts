@@ -1,4 +1,7 @@
 import { DataSource, ObjectLiteral, EntityTarget, Repository } from 'typeorm';
+import { Cliente } from '../data/models/cliente.model';
+import { Product } from '../data/models/producto.model';
+import { Inventory } from '../data/models/inventory.model';
 
 export default class DatabaseConnection {
   private dataSource: DataSource;
@@ -14,7 +17,7 @@ export default class DatabaseConnection {
       password: 'root',
       database: 'LotionMoon',
       synchronize: false,
-      entities: [''],
+      entities: [Cliente, Product, Inventory],
     });
   }
 
