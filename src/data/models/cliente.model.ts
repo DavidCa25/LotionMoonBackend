@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Sale } from "./venta.model";
 
 @Entity() 
 export class Cliente {
@@ -10,6 +11,9 @@ export class Cliente {
 
   @Column({ length: 50, unique: true })
   email!: string;
+
+  @OneToMany(() => Sale, (sale) => sale.cliente)
+  sales!: Sale[];
 
 //   constructor(clientName: string, email: string) {
 //     this.clienteID = 0; // Se sobrescribirá al insertarse en la BD

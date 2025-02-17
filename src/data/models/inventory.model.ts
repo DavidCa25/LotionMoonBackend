@@ -1,5 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
 import { Product } from "./producto.model";
+import { Sale } from "./venta.model"
+import { Purchase } from "./compra.model";
 
 @Entity()
 export class Inventory {
@@ -17,4 +19,10 @@ export class Inventory {
 
   @ManyToOne(() => Product, (product) => product.inventory, { onDelete: "CASCADE" })
   product!: Product;
+
+  @ManyToOne(() => Sale, (sale) => sale.inventory)
+  sale!: Sale;
+
+  @ManyToOne(() => Purchase, (purchase) => purchase.inventory)
+  purchase!: Purchase;
 }
