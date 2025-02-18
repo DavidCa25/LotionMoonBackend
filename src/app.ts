@@ -1,11 +1,30 @@
+import express from "express";
+import { envs } from "./config/env";
+import { MongoDatabase } from "./data/init";
+import { AppRoutes } from "./presentation/router";
 
-import AppBuilder from './appBuilder';
 
-const appBuilder = new AppBuilder();
+console.log(`Starting server on PORT: ${envs.PORT}`);
 
-appBuilder.withCors();
-appBuilder.withJsonBodyParser();
+const app = express();
+const cors = require('cors');
+app.use(cors());
+app.use(express.json());
+app.use(AppRoutes.routes);
 
-const app = appBuilder.getApp();
+(async () => {
+    try {
+        await MongoDatabase.connect({
+            mongoUrl: envs.MONGO_URL,
+            dbName: envs.MONGO_DB
+        });
+        console.log("Database connected successfully");
+    } catch (error) {
+        console.error("Database connection failed", error);
+        process.exit(1); 
+    }
+})();
 
-export default app;
+app.listen(envs.PORT, async () => {
+    console.log(`Server running on PORT ${envs.PORT}`);
+});
