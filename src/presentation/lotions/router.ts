@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { ProductController } from "./productContoller";
 import { ClienteController } from "./clienteController";
+import { InventaryController} from "./inventarioController";
 
 export class LotionRoutes {
     static get routes(): Router {
@@ -13,8 +14,12 @@ export class LotionRoutes {
         router.post('/products-create', productController.createProduct);
 
         const clientController = new ClienteController();
-        // router.post('/cliente-create', clientController.createClient);
+        router.post('/cliente-create', clientController.createClient);
         router.get('/client', clientController.getClient)
+
+        const inventaryController = new InventaryController();
+
+        
 
         return router;
     }

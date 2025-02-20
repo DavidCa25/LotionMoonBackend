@@ -27,14 +27,17 @@ export class ClienteController{
         }
     }
     
-    public createClient = async (req: Request, res: Response) => {
+    public createClient = async (req: Request, res: Response): Promise<void> => {
+        const { clientName, email } = req.body;
+
+        if(!clientName || !email) {
+            res.status(400).json({message: "faltan campos requeridos"});
+            return
+        }
         try {
-            const { clientName, email } = req.body;
             const newCliente = await ClienteModel.create({ clientName, email });
-            return res.status(201).json(newCliente);
         } catch (error) {
             console.error(error);
-            return res.status(500).json({ message: "Error al crear el cliente" });
         }
     }; 
 }
