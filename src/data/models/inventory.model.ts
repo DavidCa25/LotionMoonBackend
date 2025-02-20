@@ -1,20 +1,25 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
-import { Product } from "./producto.model";
+import mongoose from "mongoose";
 
-@Entity()
-export class Inventory {
-  @PrimaryGeneratedColumn()
-  inventoryID!: number;
+const inventorySchema = new mongoose.Schema({
+    stock: {
+        type: Number,
+        required: true
+    },
+    minimunStock: {
+        type: Number,
+        required: true
+    },
+    maximunStock: {
+        type: Number,
+        required: true
+    },
+    product: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Product",
+        required: true
+    }
+}, {
+    timestamps: true
+});
 
-  @Column()
-  stock!: number;
-
-  @Column()
-  minimunStock!: number;
-
-  @Column()
-  maximunStock!: number;
-
-  @ManyToOne(() => Product, (product) => product.inventory, { onDelete: "CASCADE" })
-  product!: Product;
-}
+export const InventoryModel = mongoose.model("Inventory", inventorySchema);

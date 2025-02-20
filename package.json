@@ -4,7 +4,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node -r ts-node/register src/index.ts"
+    "start": "node -r ts-node/register src/app.ts",
+    "build": "tsc"
   },
   "keywords": [],
   "author": "",
@@ -12,7 +13,10 @@
   "description": "",
   "dependencies": {
     "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "env-var": "^7.5.0",
     "express": "^4.21.2",
+    "mongoose": "^8.8.4",
     "mysql2": "^3.12.0",
     "typeorm": "^0.3.20"
   },
@@ -20,7 +24,9 @@
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
     "@types/node": "^22.13.4",
-    "typescript": "^5.7.3",
-    "ts-node": "^10.9.2"
+    "nodemon": "^3.1.7",
+    "rimraf": "^6.0.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.3"
   }
 }

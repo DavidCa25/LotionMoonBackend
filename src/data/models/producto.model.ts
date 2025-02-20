@@ -1,24 +1,22 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
-import { Inventory } from "./inventory.model";
+import mongoose from "mongoose";
 
-@Entity()
-export class Product {
-  @PrimaryGeneratedColumn()
-  productID!: number;
+const productSchema = new mongoose.Schema({
+    productName: {
+        type: String,
+        required: true
+    },
+    price: {
+        type: Number,
+        required: true
+    },
+    brand: {
+        type: String,
+        required: true
+    },
+    descripcion: {
+        type: String,
+        required: true
+    }
+});
 
-  @Column({ length: 100 })
-  productName!: string;
-
-  @Column()
-  price!: number;
-
-  @Column({ length: 30 })
-  brand!: string;
-
-  @Column({ length: 100 })
-  descripcion!: string;
-
-  // Relación inversa con Inventory
-  @OneToMany(() => Inventory, (inventory) => inventory.product)
-  inventory!: Inventory[];
-}
+export const ProductModel = mongoose.model("Product", productSchema);

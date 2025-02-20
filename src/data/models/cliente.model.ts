@@ -1,20 +1,18 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import mongoose from "mongoose";
 
-@Entity() 
-export class Cliente {
-  @PrimaryGeneratedColumn()
-  clienteID!: number;
+const clienteSchema = new mongoose.Schema({
+    clientName: {
+        type: String,
+        required: true,
+        maxlength: 50
+    },
+    email: {
+        type: String,
+        required: true,
+        unique: true,
+        maxlength: 50
+    }
 
-  @Column({ length: 50 })
-  clientName!: string;
+});
 
-  @Column({ length: 50, unique: true })
-  email!: string;
-
-//   constructor(clientName: string, email: string) {
-//     this.clienteID = 0; // Se sobrescribirá al insertarse en la BD
-//     this.clientName = clientName;
-//     this.email = email;
-//   }
-//   new Cliente("Juan", "juan@email.com")
-}
+export const ClienteModel = mongoose.model("Cliente", clienteSchema);
