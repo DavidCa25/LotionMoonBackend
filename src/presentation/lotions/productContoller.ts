@@ -69,7 +69,7 @@ export class ProductController {
             res.status(500).json({ message: "Error interno del servidor" });
         }
     };    
-
+//
     public deleteProduct = async (req: Request, res: Response): Promise<void> => {
         const {idProduct} = req.params;
         try {

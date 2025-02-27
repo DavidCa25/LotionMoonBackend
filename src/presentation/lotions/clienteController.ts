@@ -45,8 +45,8 @@ export class ClienteController {
 
     public updateClient = async (req: Request, res: Response) => {
         try {
-            const { id } = req.params;
-            const updatedClient = await ClienteModel.findByIdAndUpdate(id, req.body, { new: true });
+            const { idClient } = req.params;
+            const updatedClient = await ClienteModel.findByIdAndUpdate(idClient, req.body, { new: true });
             if (updatedClient) {
                 res.json(updatedClient);
             } else {
@@ -60,8 +60,8 @@ export class ClienteController {
 
     public deleteClient = async (req: Request, res: Response) => {
         try {
-            const { id } = req.params;
-            const deletedClient = await ClienteModel.findByIdAndDelete(id);
+            const { idClient } = req.params;
+            const deletedClient = await ClienteModel.findByIdAndDelete(idClient);
             if (deletedClient) {
                 res.json({ message: "Cliente eliminado correctamente" });
             } else {
