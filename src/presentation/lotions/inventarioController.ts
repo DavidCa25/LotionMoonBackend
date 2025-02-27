@@ -15,54 +15,82 @@ export class InventaryController{
     }
 
     
-    public getClientById = async (req: Request, res: Response) => {
+    public getInventoryById = async (req: Request, res: Response): Promise<void> => {
+        const { id } = req.params;
+    
         try {
-            const { id } = req.params;
-            const product = await InventoryModel.findById(id);
-            if (product) {
-                res.json(product);
-            } else {
-                res.status(404).json({ message: "Cliente no encontrado" });
+            const inventory = await InventoryModel.findById(id).populate('product');
+    
+            if (!inventory) {
+                res.status(404).json({ message: "Inventario no encontrado" });
+                return;
             }
+    
+            res.status(200).json({ inventory });
         } catch (error) {
-            console.error(error);
+            console.error("Error al obtener inventario:", error);
+            res.status(500).json({ message: "Error interno del servidor" });
         }
-    }
+    };
     
-    public createProduct = async (req: Request, res: Response): Promise<void> => {
-        const { productName, price, brand, descripcion } = req.body;
+    public createInventory = async (req: Request, res: Response): Promise<void> => {
+        try {
+            const { stock, minimunStock, maximunStock, product } = req.body;
     
-        if (!productName || !price || !brand || !descripcion) {
-            res.status(400).json({ message: "Faltan campos requeridos" });
-            return;
+            if (!stock || !minimunStock || !maximunStock || !product) {
+                res.status(400).json({ message: "Faltan campos requeridos" });
+                return;
+            }
+
+            const newInventory = await InventoryModel.create({
+                stock,
+                minimunStock,
+                maximunStock,
+                product
+            });
+    
+            res.status(201).json({ message: "Inventario creado", inventory: newInventory });
+        } catch (error) {
+            console.error("Error al crear inventario:", error);
+            res.status(500).json({ message: "Error interno del servidor" });
         }
-    
-        const session = await mongoose.startSession();
-        session.startTransaction();
+    };
+
+
+    public updateInventory = async (req: Request, res: Response): Promise<void> => {
+        const { id } = req.params;
+        const updateData = req.body;
     
         try {
-            const newProduct = await ProductModel.create({ productName, price, brand, descripcion });
+            const updatedInventory = await InventoryModel.findByIdAndUpdate(id, updateData, { new: true });
     
-            await InventoryModel.create(
-                {
-                    stock: 0,
-                    minimunStock: 10,
-                    maximunStock: 25,
-                    product: newProduct._id  
-                },
-                { session }
-            );
+            if (!updatedInventory) {
+                res.status(404).json({ message: "Inventario no encontrado" });
+                return;
+            }
     
-            await session.commitTransaction();
-            session.endSession();
-    
-            res.status(201).json(newProduct);
+            res.status(200).json({ message: "Inventario actualizado", inventory: updatedInventory });
         } catch (error) {
-            await session.abortTransaction();
-            session.endSession();
-    
-            console.error(error);
-            res.status(500).json({ message: "Error al crear un producto" });
+            console.error("Error al actualizar inventario:", error);
+            res.status(500).json({ message: "Error interno del servidor" });
         }
-    }
+    }; 
+
+    public deleteInventory = async (req: Request, res: Response): Promise<void> => {
+        const { id } = req.params;
+    
+        try {
+            const deletedInventory = await InventoryModel.findByIdAndDelete(id);
+    
+            if (!deletedInventory) {
+                res.status(404).json({ message: "Inventario no encontrado" });
+                return;
+            }
+    
+            res.status(200).json({ message: "Inventario eliminado" });
+        } catch (error) {
+            console.error("Error al eliminar inventario:", error);
+            res.status(500).json({ message: "Error interno del servidor" });
+        }
+    };
 }
