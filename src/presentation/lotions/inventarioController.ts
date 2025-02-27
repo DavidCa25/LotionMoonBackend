@@ -4,7 +4,7 @@ import { ProductModel } from "../../data/models/producto.model";
 import mongoose from "mongoose";
 
 export class InventaryController{
-    public getClient = async (req: Request, res: Response) => {
+    public getInventory = async (req: Request, res: Response) => {
         try {
             const products = await InventoryModel.find();
             res.json(products);
@@ -58,11 +58,11 @@ export class InventaryController{
 
 
     public updateInventory = async (req: Request, res: Response): Promise<void> => {
-        const { id } = req.params;
+        const { idInventory } = req.params;
         const updateData = req.body;
     
         try {
-            const updatedInventory = await InventoryModel.findByIdAndUpdate(id, updateData, { new: true });
+            const updatedInventory = await InventoryModel.findByIdAndUpdate(idInventory, updateData, { new: true });
     
             if (!updatedInventory) {
                 res.status(404).json({ message: "Inventario no encontrado" });
@@ -77,10 +77,10 @@ export class InventaryController{
     }; 
 
     public deleteInventory = async (req: Request, res: Response): Promise<void> => {
-        const { id } = req.params;
+        const { idInventory } = req.params;
     
         try {
-            const deletedInventory = await InventoryModel.findByIdAndDelete(id);
+            const deletedInventory = await InventoryModel.findByIdAndDelete(idInventory);
     
             if (!deletedInventory) {
                 res.status(404).json({ message: "Inventario no encontrado" });
