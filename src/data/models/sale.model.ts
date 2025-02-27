@@ -20,11 +20,19 @@ const saleSchema = new mongoose.Schema({
         ref: "Employee", 
         required: true
     },
-    inventoryID: {
-        type: mongoose.Schema.Types.ObjectId, 
-        ref: "Inventory", 
-        required: true
-    }
+    products: [  
+        {
+            inventoryID: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "Inventory",
+                required: true
+            },
+            quantity: {
+                type: Number,
+                required: true
+            }
+        }
+    ]
 });
 
 export const SaleModel = mongoose.model("Sale", saleSchema);

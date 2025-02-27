@@ -28,14 +28,14 @@ export class EmployeeController {
     };
 
     public createEmployee = async (req: Request, res: Response): Promise<void> => {
-        const { employeeName, email } = req.body;
+        const { employeeName, email, contrasena } = req.body;
 
-        if (!employeeName || !email) {
+        if (!employeeName || !email || !contrasena) {
             res.status(400).json({ message: "Faltan campos requeridos" });
             return;
         }
         try {
-            const newEmployee = await EmployeeModel.create({ employeeName, email });
+            const newEmployee = await EmployeeModel.create({ employeeName, email, contrasena });
             res.status(201).json(newEmployee);
         } catch (error) {
             console.error(error);

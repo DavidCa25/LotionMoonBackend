@@ -16,37 +16,55 @@ export class SaleController {
     }
 
     public createSale = async (req: Request, res: Response): Promise<void> => {
-        const { productId, quantity, totalPrice } = req.body;
-
-        if (!productId || !quantity || !totalPrice) {
-            res.status(400).json({ message: "Faltan campos requeridos" });
+        const { products, totalPrice, clientID, employeeID } = req.body;
+    
+        if (!products || !Array.isArray(products) || products.length === 0 || !totalPrice || !clientID || !employeeID) {
+            res.status(400).json({ message: "Faltan campos requeridos o los productos no tienen el formato correcto" });
             return;
         }
-
+    
         const session = await mongoose.startSession();
         session.startTransaction();
-
+    
         try {
-            const newSale = await SaleModel.create([{ productId, quantity, totalPrice }], { session });
-
-            const productInventory = await InventoryModel.findOne({ product: productId }).session(session);
-            if (productInventory) {
-                productInventory.stock -= quantity;
-                await productInventory.save({ session });
+            for (const product of products) {
+                const { inventoryID, quantity } = product;
+    
+                const inventoryItem = await InventoryModel.findById(inventoryID).session(session);
+                if (!inventoryItem) {
+                    throw new Error(`El producto en inventario ${inventoryID} no existe`);
+                }
+    
+                if (inventoryItem.stock < quantity) {
+                    throw new Error(`Stock insuficiente para el producto ${inventoryID}`);
+                }
+    
+                inventoryItem.stock -= quantity;
+                await inventoryItem.save({ session });
             }
-
+    
+            const newSale = await SaleModel.create([{
+                total: totalPrice,
+                clientID,
+                employeeID,
+                products 
+            }], { session });
+    
             await session.commitTransaction();
             session.endSession();
-
-            res.status(201).json(newSale);
+    
+            res.status(201).json({ message: "Venta creada exitosamente", sale: newSale });
         } catch (error) {
             await session.abortTransaction();
             session.endSession();
-
+    
             console.error(error);
-            res.status(500).json({ message: "Error al crear la venta" });
+            res.status(500).json({ message: error || "Error al crear la venta" });
         }
     };
+    
+    
+    
 
     public updateSaleById = async (req: Request, res: Response): Promise<void> => {
         const { idSale } = req.params;
