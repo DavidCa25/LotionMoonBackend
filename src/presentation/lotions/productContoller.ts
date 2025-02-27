@@ -14,20 +14,6 @@ export class ProductController {
         }
     }
 
-    public getProductById = async (req: Request, res: Response) => {
-        try {
-            const { id } = req.params;
-            const product = await ProductModel.findById(id);
-            if (product) {
-                res.json(product);
-            } else {
-                res.status(404).json({ message: "Producto no encontrado" });
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    }
-
     public createProduct = async (req: Request, res: Response): Promise<void> => {
         const { productName, price, brand, descripcion } = req.body;
     
@@ -59,4 +45,45 @@ export class ProductController {
             res.status(500).json({ message: "Error al crear un producto" });
         }
     };    
+
+    public updateProductById = async (req: Request, res: Response): Promise<void> => {
+        const { idProduct } = req.params;
+        const updateData = req.body;
+    
+        if (!idProduct || Object.keys(updateData).length === 0) {
+            res.status(400).json({ message: "Faltan campos requeridos o datos a actualizar" });
+            return;
+        }
+    
+        try {
+            const updatedProduct = await ProductModel.findByIdAndUpdate(idProduct, { $set: updateData }, { new: true });
+    
+            if (!updatedProduct) {
+                res.status(404).json({ message: "Producto no encontrado" });
+                return;
+            }
+    
+            res.status(200).json({ message: "Producto actualizado", product: updatedProduct });
+        } catch (error) {
+            console.error("Error al actualizar producto:", error);
+            res.status(500).json({ message: "Error interno del servidor" });
+        }
+    };    
+
+    public deleteProduct = async (req: Request, res: Response): Promise<void> => {
+        const {idProduct} = req.params;
+        try {
+            const updatedProduct = await ProductModel.findByIdAndDelete(idProduct);
+    
+            if (!updatedProduct) {
+                res.status(404).json({ message: "Producto no encontrado" });
+                return;
+            }
+    
+            res.status(200).json({ message: "Producto eliminado", product: updatedProduct });
+        } catch (error) {
+            console.error("Error al eliminar producto:", error);
+            res.status(500).json({ message: "Error interno del servidor" });
+        }
+    }
 }
