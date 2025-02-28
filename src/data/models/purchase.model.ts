@@ -16,13 +16,23 @@ const purchaseSchema = new mongoose.Schema({
         maxlength: 50
     },
     employeeID: {
-        type: Number,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "EmployeeID",
         required: true
     },
-    inventoryID: {
-        type: Number,
-        required: true
-    }
+    products: [  
+        {
+            inventoryID: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "Inventory",
+                required: true
+            },
+            quantity: {
+                type: Number,
+                required: true
+            }
+        }
+    ]
 });
 
 export const PurchaseModel = mongoose.model("Purchase", purchaseSchema);

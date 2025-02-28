@@ -2,11 +2,12 @@ import { Request, Response } from "express";
 import { InventoryModel } from "../../data/models/inventory.model";
 import { ProductModel } from "../../data/models/producto.model";
 import mongoose from "mongoose";
+import { populate } from "dotenv";
 
 export class InventaryController{
     public getInventory = async (req: Request, res: Response) => {
         try {
-            const products = await InventoryModel.find();
+            const products = await InventoryModel.find().populate("product", "productName price");
             res.json(products);
         } catch (error) {
             console.error(error);
